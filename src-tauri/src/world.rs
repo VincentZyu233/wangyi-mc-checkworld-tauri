@@ -148,7 +148,7 @@ pub fn open_folder(path: String) -> Result<(), String> {
     #[cfg(target_os = "windows")]
     {
         std::process::Command::new("explorer")
-            .arg(format!("/select,{}", path))
+            .arg(&path)
             .spawn()
             .map_err(|e| {
                 tracing::error!("打开文件夹失败: {}", e);

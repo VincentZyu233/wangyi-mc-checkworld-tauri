@@ -184,6 +184,15 @@ header h1 {
   font-size: 0.85rem;
 }
 
+#theme-btn, #log-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Select */
 select {
   padding: 10px 15px;

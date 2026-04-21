@@ -474,7 +474,7 @@ function showModal(title, message, inputValue, callback, confirmText, isDanger =
   const inputElement = document.getElementById('modal-input');
   const inputHint = document.getElementById('modal-input-hint');
 
-  if (requiredInput !== null) {
+  if (requiredInput != null) {
     inputContainer.classList.remove('hidden');
     inputElement.value = '';
     inputElement.placeholder = `请输入 "${requiredInput}" 确认`;
@@ -513,6 +513,7 @@ function showToast(message, isError = false) {
   const toast = document.getElementById('toast');
   toast.textContent = message;
   toast.className = isError ? 'toast error' : 'toast';
+  toast.classList.remove('hidden');
 
   setTimeout(() => {
     toast.classList.add('hidden');
