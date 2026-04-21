@@ -364,6 +364,12 @@ select:focus {
   border-color: var(--accent);
 }
 
+.modal-input-hint {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
 .modal-actions {
   display: flex;
   gap: 10px;
@@ -456,6 +462,15 @@ select:focus {
 .log-header h3 {
   font-size: 14px;
   font-weight: normal;
+}
+
+.log-path {
+  padding: 4px 15px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+  word-break: break-all;
 }
 
 .log-content {

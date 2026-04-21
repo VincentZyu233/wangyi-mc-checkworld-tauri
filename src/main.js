@@ -4,6 +4,8 @@ let allWorlds = [];
 let filteredWorlds = [];
 let currentTheme = 'system';
 let currentLocale = 'zh-CN';
+let logInterval = null;
+let lastLogLen = 0;
 
 const translations = {
   'zh-CN': {
@@ -52,6 +54,8 @@ const translations = {
     toastLoadFailed: '加载存档失败',
     nameEmptyError: '名称不能为空',
     logWindowTitle: '📋 日志',
+    logPollingStarted: '开始实时日志轮询',
+    logPollingStopped: '日志窗口已关闭',
   },
   'en-US': {
     appTitle: '🎮 MC NetEase World Manager',
@@ -105,7 +109,7 @@ const translations = {
 const themeIcons = {
   'light': '☀️',
   'dark': '🌙',
-  'system': '🌓'
+  'system': '🖥️'
 };
 
 function t(key, params = {}) {
@@ -331,6 +335,8 @@ function setupEventListeners() {
   document.getElementById('modal').addEventListener('click', (e) => {
     if (e.target.id === 'modal') hideModal();
   });
+  document.getElementById('log-btn').addEventListener('click', toggleLogWindow);
+  document.getElementById('log-close').addEventListener('click', toggleLogWindow);
 }
 
 async function openFolder(path) {
@@ -339,6 +345,49 @@ async function openFolder(path) {
   } catch (e) {
     showToast(t('toastOpenFailed', { error: e }), true);
   }
+}
+
+function toggleLogWindow() {
+  const logWindow = document.getElementById('log-window');
+  const isHidden = logWindow.classList.contains('hidden');
+
+  if (isHidden) {
+    logWindow.classList.remove('hidden');
+    // 显示日志文件路径
+    invoke('get_log_path_command').then((path) => {
+      document.getElementById('log-path').textContent = path;
+    }).catch(() => {});
+    lastLogLen = 0;
+    fetchLog();
+    logInterval = setInterval(fetchLog, 1000);
+  } else {
+    logWindow.classList.add('hidden');
+    if (logInterval !== null) {
+      clearInterval(logInterval);
+      logInterval = null;
+    }
+  }
+}
+
+async function fetchLog() {
+  try {
+    const content = await invoke('read_log');
+    if (content.length !== lastLogLen) {
+      const logEl = document.getElementById('log-content');
+      logEl.textContent = content;
+      logEl.scrollTop = logEl.scrollHeight;
+      lastLogLen = content.length;
+    }
+  } catch (e) {
+    // ignore read errors while polling
+  }
+}
+
+function appendLog(message) {
+  const logContent = document.getElementById('log-content');
+  const timestamp = new Date().toLocaleTimeString();
+  logContent.textContent += `[${timestamp}] ${message}\n`;
+  logContent.scrollTop = logContent.scrollHeight;
 }
 
 async function backupWorld(folder, name) {
@@ -350,6 +399,10 @@ async function backupWorld(folder, name) {
     t('modalBackupMessage', { name }),
     defaultName,
     async (backupName) => {
+      if (!backupName.trim()) {
+        showToast('备份名称不能为空', true);
+        return;
+      }
       try {
         const path = await invoke('backup_world', { folder, backupName });
         showToast(t('toastBackupSuccess', { path }));
@@ -389,8 +442,12 @@ async function deleteWorld(folder, name) {
   showModal(
     t('modalDeleteTitle'),
     t('modalDeleteMessage', { name }),
-    null,
-    async () => {
+    '',
+    async (inputValue) => {
+      if (inputValue !== name) {
+        showToast(`名称不匹配：需输入 "${name}" 才能确认删除`, true);
+        return;
+      }
       try {
         await invoke('delete_world', { folder });
         showToast(t('toastDeleteSuccess'));
@@ -400,13 +457,14 @@ async function deleteWorld(folder, name) {
       }
     },
     t('modalDeleteConfirm'),
-    true
+    true,
+    name
   );
 }
 
 let modalCallback = null;
 
-function showModal(title, message, inputValue, callback, confirmText, isDanger = false) {
+function showModal(title, message, inputValue, callback, confirmText, isDanger = false, requiredInput = null) {
   modalCallback = callback;
 
   document.getElementById('modal-title').textContent = title;
@@ -414,20 +472,31 @@ function showModal(title, message, inputValue, callback, confirmText, isDanger =
 
   const inputContainer = document.getElementById('modal-input-container');
   const inputElement = document.getElementById('modal-input');
+  const inputHint = document.getElementById('modal-input-hint');
 
-  if (inputValue !== null) {
+  if (requiredInput !== null) {
+    inputContainer.classList.remove('hidden');
+    inputElement.value = '';
+    inputElement.placeholder = `请输入 "${requiredInput}" 确认`;
+    inputHint.textContent = `请输入 "${requiredInput}" 才能点击确认`;
+    inputHint.classList.remove('hidden');
+    setTimeout(() => inputElement.focus(), 100);
+  } else if (inputValue !== null) {
     inputContainer.classList.remove('hidden');
     inputElement.value = inputValue;
+    inputElement.placeholder = '';
+    inputHint.classList.add('hidden');
     setTimeout(() => inputElement.focus(), 100);
   } else {
     inputContainer.classList.add('hidden');
+    inputHint.classList.add('hidden');
   }
 
   const confirmBtn = document.getElementById('modal-confirm');
   confirmBtn.textContent = confirmText;
   confirmBtn.className = isDanger ? 'btn btn-danger' : 'btn btn-primary';
   confirmBtn.onclick = () => {
-    const value = inputValue !== null ? inputElement.value : null;
+    const value = (requiredInput !== null || inputValue !== null) ? inputElement.value : null;
     hideModal();
     if (modalCallback) modalCallback(value);
   };

@@ -91,7 +91,7 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=f"""
 示例:
-  {GREEN}python bump.py --version 0.2.8{RESET}
+  {GREEN}python bump.py --version 0.3.0{RESET}
   {GREEN}python bump.py -v 1.0.0{RESET}
         """,
     )
