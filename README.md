@@ -21,6 +21,9 @@
 | ![walkdir](https://img.shields.io/badge/walkdir-2.4-orange?logo=rust&logoColor=white) | 2.4 | 高效遍历目录树，扫描存档文件夹 |
 | ![fs_extra](https://img.shields.io/badge/fs__extra-1.3-orange?logo=rust&logoColor=white) | 1.3 | 增强版文件操作，复制/移动/重命名文件夹 |
 | ![zip](https://img.shields.io/badge/zip-0.6-orange?logo=rust&logoColor=white) | 0.6 | ZIP 压缩/解压，打包存档为 .zip 备份 |
+| ![tracing](https://img.shields.io/badge/tracing-0.1-orange?logo=rust&logoColor=white) | 0.1 | 结构化日志门面 API |
+| ![tracing-subscriber](https://img.shields.io/badge/tracing--subscriber-0.3-orange?logo=rust&logoColor=white) | 0.3 | 日志订阅者（env-filter 过滤器） |
+| ![tracing-appender](https://img.shields.io/badge/tracing--appender-0.2-orange?logo=rust&logoColor=white) | 0.2 | 非阻塞日志写入文件 |
 
 ## ✨ 功能
 
@@ -31,6 +34,7 @@
 - ✏️ **重命名存档** - 修改存档显示名称
 - 🗑️ **删除存档** - 安全删除不需要的存档
 - 🎨 **深色主题** - 现代化暗色 UI 界面
+- 📋 **实时日志** - exe 同级目录 latest.log，前端窗口实时查看
 
 ## 🔧 核心原理
 
@@ -110,7 +114,9 @@ wangyi-mc-checkworld-tauri/
 │   ├── Cargo.toml
 │   ├── tauri.conf.json
 │   └── src/
-│       └── main.rs
+│       ├── main.rs         # 入口 + 模块引入
+│       ├── logger.rs      # tracing 日志系统
+│       └── world.rs       # 存档 CRUD
 ├── .github/
 │   └── workflows/
 │       └── build.yml       # GitHub Actions

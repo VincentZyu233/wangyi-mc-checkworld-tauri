@@ -1,6 +1,6 @@
 [package]
 name = "wangyi-mc-checkworld-tauri"
-version = "0.3.0"
+version = "0.3.1"
 description = "Minecraft Bedrock (NetEase) World Save Manager"
 authors = ["VincentZyu"]
 edition = "2021"
