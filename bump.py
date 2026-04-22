@@ -88,11 +88,11 @@ def main():
     print_header("🚀 版本号更新工具")
 
     parser = argparse.ArgumentParser(
-        description=f"{BOLD}MC 存档管理器 - 版本号批量更新工具{RESET}",
+        description=f"{BOLD}MC 存档查看器 - 版本号批量更新工具{RESET}",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=f"""
 示例:
-  {GREEN}python bump.py --version 0.4.4{RESET}
+  {GREEN}python bump.py --version 0.4.5{RESET}
   {GREEN}python bump.py -v 1.0.0{RESET}
         """,
     )

@@ -1,11 +1,11 @@
-![wangyi-mc-checkworld-tauri](https://socialify.git.ci/VincentZyuApps/wangyi-mc-checkworld-tauri/image?custom_language=Rust&description=1&font=Source+Code+Pro&forks=1&issues=1&language=1&logo=https%3A%2F%2Ficon.icepanel.io%2FTechnology%2Fsvg%2FTauri.svg&name=1&owner=1&pattern=Signal&pulls=1&stargazers=1&theme=Auto)
+![wangyi-mc-checkworld-tauri](https://socialify.git.ci/VincentZyuApps/wangyi-mc-checkworld-tauri/image?custom_language=Rust&description=1&font=JetBrains+Mono&forks=1&issues=1&language=1&logo=https%3A%2F%2Fuxwing.com%2Fwp-content%2Fthemes%2Fuxwing%2Fdownload%2Fbrands-and-social-media%2Ftauri-icon.png&name=1&owner=1&pattern=Signal&pulls=1&stargazers=1&theme=Auto)
 
 # MC NetEase World Manager
 
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-black?logo=github)](https://github.com/VincentZyuApps/wangyi-mc-checkworld-tauri)
 [![Gitee](https://img.shields.io/badge/Gitee-Repository-c41e3a?logo=gitee&logoColor=white)](https://gitee.com/vincent-zyu/wangyi-mc-checkworld-tauri)
 
-一个用 Rust + Tauri 构建的网易我的世界电脑版存档管理工具。
+一个用 Rust + Tauri 构建的网易我的世界电脑版存档查看工具。
 
 ## 🛠️ 技术栈
 

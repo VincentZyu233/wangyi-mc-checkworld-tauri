@@ -30,10 +30,13 @@ const translations = {
     noWorlds: '未找到存档',
     loadingWorlds: '⏳ 加载存档中...',
     errorLoading: '❌ 加载错误',
+    btnOpenRoot: '📁 打开',
+    btnCopyRoot: '📋 复制',
     btnOpen: '📁 打开',
+    btnCopy: '📋 复制',
     toastPathCopied: '路径已复制',
     modalCancel: '取消',
-    logWindowTitle: '� 日志',
+    logWindowTitle: '📝 日志',
     logPollingStarted: '开始实时日志轮询',
     logPollingStopped: '日志窗口已关闭',
   },
@@ -59,10 +62,13 @@ const translations = {
     noWorlds: 'No worlds found',
     loadingWorlds: '⏳ Loading worlds...',
     errorLoading: '❌ Error loading',
+    btnOpenRoot: '📁 Open',
+    btnCopyRoot: '📋 Copy',
     btnOpen: '📁 Open',
+    btnCopy: '📋 Copy',
     toastPathCopied: 'Path copied',
     modalCancel: 'Cancel',
-    logWindowTitle: '� Log',
+    logWindowTitle: '📝 Log',
   }
 };
 
@@ -145,7 +151,6 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () 
 async function loadWorldsPath() {
   try {
     const path = await invoke('get_worlds_path');
-    document.getElementById('worlds-path').textContent = `📂 ${path}`;
     document.getElementById('path-bar-text').textContent = path;
   } catch (e) {
     console.error('Failed to get worlds path:', e);
@@ -185,8 +190,8 @@ function renderWorlds() {
       <td class="col-size">${world.size_formatted}</td>
       <td class="col-actions">
         <div class="action-buttons">
-          <button class="btn btn-secondary btn-small" onclick="openFolder('${escapeJs(world.path)}')">📁</button>
-          <button class="btn btn-secondary btn-small" onclick="copyFolderPath('${escapeJs(world.path)}')">📋</button>
+          <button class="btn btn-secondary btn-small" onclick="openFolder('${escapeJs(world.path)}')">${t('btnOpen')}</button>
+          <button class="btn btn-secondary btn-small" onclick="copyFolderPath('${escapeJs(world.path)}')">${t('btnCopy')}</button>
         </div>
       </td>
     </tr>
@@ -274,6 +279,8 @@ function updateUITexts() {
   document.getElementById('th-time').textContent = t('colTime');
   document.getElementById('th-size').textContent = t('colSize');
   document.getElementById('th-actions').textContent = t('colActions');
+  document.getElementById('open-root-btn').innerHTML = t('btnOpenRoot');
+  document.getElementById('copy-path-btn2').innerHTML = t('btnCopyRoot');
   
   renderWorlds();
 }

@@ -342,7 +342,7 @@ select:focus {
 .action-buttons {
   display: flex;
   gap: 6px;
-  justify-content: center;
+  justify-content: flex-start;
   flex-wrap: wrap;
 }
 
