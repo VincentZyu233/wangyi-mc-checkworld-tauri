@@ -185,7 +185,8 @@ function renderWorlds() {
       <td class="col-size">${world.size_formatted}</td>
       <td class="col-actions">
         <div class="action-buttons">
-          <button class="btn btn-secondary btn-small" onclick="openFolder('${escapeJs(world.path)}')">${t('btnOpen')}</button>
+          <button class="btn btn-secondary btn-small" onclick="openFolder('${escapeJs(world.path)}')">📁</button>
+          <button class="btn btn-secondary btn-small" onclick="copyFolderPath('${escapeJs(world.path)}')">📋</button>
         </div>
       </td>
     </tr>
@@ -304,6 +305,11 @@ function setupEventListeners() {
       }).catch(() => {});
     }
   };
+  document.getElementById('open-root-btn').addEventListener('click', () => {
+    const path = document.getElementById('path-bar-text').textContent;
+    if (path && path !== '—') openFolder(path);
+  });
+
   document.getElementById('copy-path-btn').addEventListener('click', copyPath);
   document.getElementById('copy-path-btn2').addEventListener('click', copyPath);
 }
@@ -335,6 +341,16 @@ async function openFolder(path) {
   } catch (e) {
     // silently fail - opening folder is non-critical
   }
+}
+
+function copyFolderPath(path) {
+  navigator.clipboard.writeText(path).then(() => {
+    const toast = document.getElementById('toast');
+    toast.textContent = t('toastPathCopied');
+    toast.className = 'toast';
+    toast.classList.remove('hidden');
+    setTimeout(() => toast.classList.add('hidden'), 2000);
+  }).catch(() => {});
 }
 
 async function fetchLog() {
