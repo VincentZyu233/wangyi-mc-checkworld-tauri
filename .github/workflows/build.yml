@@ -181,7 +181,7 @@ jobs:
           body: |
             ## 网易MC检查世界 v${{ needs.check.outputs.version }}
 
-            ### 📦 下载说明
+            ### 📦 二进制形式说明
             - **绿色版.zip**: 便携版，解压后运行 exe
             - **exe**: 便携版，直接运行 `wangyi-mc-checkworld-v${{ needs.check.outputs.version }}-windows-x64.exe` 即可
             - **msi**: Windows 安装程序

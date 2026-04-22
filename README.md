@@ -54,7 +54,11 @@
 
 [![Windows x64](https://img.shields.io/badge/Download-Windows_x64-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/VincentZyuApps/wangyi-mc-checkworld-tauri/releases)
 
-前往 [Releases](https://github.com/VincentZyuApps/wangyi-mc-checkworld-tauri/releases) 页面下载最新版本的 ZIP 包，解压后直接运行 `wangyi-mc-checkworld-tauri.exe`。
+前往 [Releases](https://github.com/VincentZyuApps/wangyi-mc-checkworld-tauri/releases) 页面下载最新版本二进制构建产物。提供三种形式：
+#### 📦 二进制形式说明
+- **绿色版.zip**: 便携版，解压后运行 exe
+- **exe**: 便携版，直接运行 `wangyi-mc-checkworld-v{x.y.z}-windows-x64.exe` 即可
+- **msi**: Windows 安装程序
 
 ### 方式 2：从源码构建
 
