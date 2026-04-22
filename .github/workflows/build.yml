@@ -180,19 +180,20 @@ jobs:
           name: Release v${{ needs.check.outputs.version }}
           body: |
             ## 网易MC检查世界 v${{ needs.check.outputs.version }}
-            
+
             ### 📦 下载说明
+            - **绿色版.zip**: 便携版，解压后运行 exe
             - **exe**: 便携版，直接运行 `wangyi-mc-checkworld-v${{ needs.check.outputs.version }}-windows-x64.exe` 即可
             - **msi**: Windows 安装程序
-            - **绿色版.zip**: 便携版，解压后运行 exe
-            
+
             ### ✨ 功能
-            - 📂 列出所有网易 MC 存档
+            - 📂 列出所有网易MC存档
             - 🔍 搜索和排序
-            - 💾 备份存档为 ZIP
-            - ✏️ 重命名存档
-            - 🗑️ 删除存档
-            
+            - 📁 打开存档文件夹
+            - 📋 复制存档路径
+            - 📝 实时查看运行日志
+            - 🎨 支持明暗UI主题
+
             ### 🖥️ 系统要求
             - Windows 10/11 x64 (仅支持 64 位)
             - 已安装网易我的世界电脑版

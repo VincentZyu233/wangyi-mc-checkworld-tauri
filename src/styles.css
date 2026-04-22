@@ -273,7 +273,7 @@ select:focus {
 
 .worlds-table th.col-size,
 .worlds-table td.col-size {
-  text-align: right;
+  text-align: left;
 }
 
 .worlds-table th.col-actions,
@@ -330,13 +330,13 @@ select:focus {
 
 .col-size {
   min-width: 100px;
-  text-align: right !important;
+  text-align: left !important;
   color: var(--text-secondary);
 }
 
 .col-actions {
   min-width: 200px;
-  text-align: center !important;
+  text-align: left !important;
 }
 
 .action-buttons {
