@@ -43,7 +43,15 @@
           <option value="size-desc">💾 Largest First</option>
           <option value="size-asc">💾 Smallest First</option>
         </select>
+        <button id="copy-path-btn" class="btn btn-secondary btn-small" title="Copy path">📋</button>
       </div>
+    </div>
+
+    <!-- Path bar -->
+    <div class="path-bar">
+      <span id="path-bar-label">📂</span>
+      <span id="path-bar-text">—</span>
+      <button id="copy-path-btn2" class="btn btn-secondary btn-small" title="复制路径">📋</button>
     </div>
 
     <div class="stats-bar">
@@ -69,22 +77,6 @@
           </tr>
         </tbody>
       </table>
-    </div>
-
-    <!-- Modal for confirmations -->
-    <div id="modal" class="modal hidden">
-      <div class="modal-content">
-        <h2 id="modal-title">Confirm</h2>
-        <p id="modal-message"></p>
-        <div id="modal-input-container" class="hidden">
-          <input type="text" id="modal-input" placeholder="">
-          <p id="modal-input-hint" class="modal-input-hint hidden"></p>
-        </div>
-        <div class="modal-actions">
-          <button id="modal-cancel" class="btn btn-secondary">Cancel</button>
-          <button id="modal-confirm" class="btn btn-danger">Confirm</button>
-        </div>
-      </div>
     </div>
 
     <!-- Toast notifications -->

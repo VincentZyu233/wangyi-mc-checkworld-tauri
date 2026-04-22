@@ -31,28 +31,8 @@ const translations = {
     loadingWorlds: '⏳ 加载存档中...',
     errorLoading: '❌ 加载错误',
     btnOpen: '📁 打开',
-    btnBackup: '💾 备份',
-    btnRename: '✏️ 重命名',
-    btnDelete: '🗑️ 删除',
-    modalBackupTitle: '💾 备份存档',
-    modalBackupMessage: '创建 "{name}" 的备份？',
-    modalBackupConfirm: '备份',
-    modalRenameTitle: '✏️ 重命名存档',
-    modalRenameMessage: '输入新名称:',
-    modalRenameConfirm: '重命名',
-    modalDeleteTitle: '🗑️ 删除存档',
-    modalDeleteMessage: '确定要删除 "{name}" 吗？此操作无法撤销！',
-    modalDeleteConfirm: '删除',
+    toastPathCopied: '路径已复制',
     modalCancel: '取消',
-    toastBackupSuccess: '备份已创建: {path}',
-    toastBackupFailed: '备份失败: {error}',
-    toastRenameSuccess: '存档重命名成功',
-    toastRenameFailed: '重命名失败: {error}',
-    toastDeleteSuccess: '存档已删除',
-    toastDeleteFailed: '删除失败: {error}',
-    toastOpenFailed: '打开文件夹失败: {error}',
-    toastLoadFailed: '加载存档失败',
-    nameEmptyError: '名称不能为空',
     logWindowTitle: '📋 日志',
     logPollingStarted: '开始实时日志轮询',
     logPollingStopped: '日志窗口已关闭',
@@ -80,28 +60,8 @@ const translations = {
     loadingWorlds: '⏳ Loading worlds...',
     errorLoading: '❌ Error loading',
     btnOpen: '📁 Open',
-    btnBackup: '💾 Backup',
-    btnRename: '✏️ Rename',
-    btnDelete: '🗑️ Delete',
-    modalBackupTitle: '💾 Backup World',
-    modalBackupMessage: 'Create a backup of "{name}"?',
-    modalBackupConfirm: 'Backup',
-    modalRenameTitle: '✏️ Rename World',
-    modalRenameMessage: 'Enter new name:',
-    modalRenameConfirm: 'Rename',
-    modalDeleteTitle: '🗑️ Delete World',
-    modalDeleteMessage: 'Are you sure you want to delete "{name}"?\n\nThis action cannot be undone!',
-    modalDeleteConfirm: 'Delete',
+    toastPathCopied: 'Path copied',
     modalCancel: 'Cancel',
-    toastBackupSuccess: 'Backup created: {path}',
-    toastBackupFailed: 'Backup failed: {error}',
-    toastRenameSuccess: 'World renamed successfully',
-    toastRenameFailed: 'Rename failed: {error}',
-    toastDeleteSuccess: 'World deleted',
-    toastDeleteFailed: 'Delete failed: {error}',
-    toastOpenFailed: 'Failed to open folder: {error}',
-    toastLoadFailed: 'Failed to load worlds',
-    nameEmptyError: 'Name cannot be empty',
     logWindowTitle: '📋 Log',
   }
 };
@@ -186,6 +146,7 @@ async function loadWorldsPath() {
   try {
     const path = await invoke('get_worlds_path');
     document.getElementById('worlds-path').textContent = `📂 ${path}`;
+    document.getElementById('path-bar-text').textContent = path;
   } catch (e) {
     console.error('Failed to get worlds path:', e);
   }
@@ -225,9 +186,6 @@ function renderWorlds() {
       <td class="col-actions">
         <div class="action-buttons">
           <button class="btn btn-secondary btn-small" onclick="openFolder('${escapeJs(world.path)}')">${t('btnOpen')}</button>
-          <button class="btn btn-secondary btn-small" onclick="backupWorld('${escapeJs(world.folder)}', '${escapeJs(world.name)}')">${t('btnBackup')}</button>
-          <button class="btn btn-secondary btn-small" onclick="renameWorld('${escapeJs(world.folder)}', '${escapeJs(world.name)}')">${t('btnRename')}</button>
-          <button class="btn btn-danger btn-small" onclick="deleteWorld('${escapeJs(world.folder)}', '${escapeJs(world.name)}')">${t('btnDelete')}</button>
         </div>
       </td>
     </tr>
@@ -331,20 +289,23 @@ function setupEventListeners() {
     setLocale(e.target.value);
   });
 
-  document.getElementById('modal-cancel').addEventListener('click', hideModal);
-  document.getElementById('modal').addEventListener('click', (e) => {
-    if (e.target.id === 'modal') hideModal();
-  });
   document.getElementById('log-btn').addEventListener('click', toggleLogWindow);
   document.getElementById('log-close').addEventListener('click', toggleLogWindow);
-}
 
-async function openFolder(path) {
-  try {
-    await invoke('open_folder', { path });
-  } catch (e) {
-    showToast(t('toastOpenFailed', { error: e }), true);
-  }
+  const copyPath = () => {
+    const path = document.getElementById('path-bar-text').textContent;
+    if (path && path !== '—') {
+      navigator.clipboard.writeText(path).then(() => {
+        const toast = document.getElementById('toast');
+        toast.textContent = t('toastPathCopied');
+        toast.className = 'toast';
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 2000);
+      }).catch(() => {});
+    }
+  };
+  document.getElementById('copy-path-btn').addEventListener('click', copyPath);
+  document.getElementById('copy-path-btn2').addEventListener('click', copyPath);
 }
 
 function toggleLogWindow() {
@@ -353,7 +314,6 @@ function toggleLogWindow() {
 
   if (isHidden) {
     logWindow.classList.remove('hidden');
-    // 显示日志文件路径
     invoke('get_log_path_command').then((path) => {
       document.getElementById('log-path').textContent = path;
     }).catch(() => {});
@@ -369,6 +329,14 @@ function toggleLogWindow() {
   }
 }
 
+async function openFolder(path) {
+  try {
+    await invoke('open_folder', { path });
+  } catch (e) {
+    // silently fail - opening folder is non-critical
+  }
+}
+
 async function fetchLog() {
   try {
     const content = await invoke('read_log');
@@ -381,143 +349,6 @@ async function fetchLog() {
   } catch (e) {
     // ignore read errors while polling
   }
-}
-
-function appendLog(message) {
-  const logContent = document.getElementById('log-content');
-  const timestamp = new Date().toLocaleTimeString();
-  logContent.textContent += `[${timestamp}] ${message}\n`;
-  logContent.scrollTop = logContent.scrollHeight;
-}
-
-async function backupWorld(folder, name) {
-  const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-  const defaultName = `${name}_backup_${timestamp}`;
-
-  showModal(
-    t('modalBackupTitle'),
-    t('modalBackupMessage', { name }),
-    defaultName,
-    async (backupName) => {
-      if (!backupName.trim()) {
-        showToast('备份名称不能为空', true);
-        return;
-      }
-      try {
-        const path = await invoke('backup_world', { folder, backupName });
-        showToast(t('toastBackupSuccess', { path }));
-      } catch (e) {
-        showToast(t('toastBackupFailed', { error: e }), true);
-      }
-    },
-    t('modalBackupConfirm'),
-    false
-  );
-}
-
-async function renameWorld(folder, currentName) {
-  showModal(
-    t('modalRenameTitle'),
-    t('modalRenameMessage'),
-    currentName,
-    async (newName) => {
-      if (!newName.trim()) {
-        showToast(t('nameEmptyError'), true);
-        return;
-      }
-      try {
-        await invoke('rename_world', { folder, newName: newName.trim() });
-        showToast(t('toastRenameSuccess'));
-        await loadWorlds();
-      } catch (e) {
-        showToast(t('toastRenameFailed', { error: e }), true);
-      }
-    },
-    t('modalRenameConfirm'),
-    false
-  );
-}
-
-async function deleteWorld(folder, name) {
-  showModal(
-    t('modalDeleteTitle'),
-    t('modalDeleteMessage', { name }),
-    '',
-    async (inputValue) => {
-      if (inputValue !== name) {
-        showToast(`名称不匹配：需输入 "${name}" 才能确认删除`, true);
-        return;
-      }
-      try {
-        await invoke('delete_world', { folder });
-        showToast(t('toastDeleteSuccess'));
-        await loadWorlds();
-      } catch (e) {
-        showToast(t('toastDeleteFailed', { error: e }), true);
-      }
-    },
-    t('modalDeleteConfirm'),
-    true,
-    name
-  );
-}
-
-let modalCallback = null;
-
-function showModal(title, message, inputValue, callback, confirmText, isDanger = false, requiredInput = null) {
-  modalCallback = callback;
-
-  document.getElementById('modal-title').textContent = title;
-  document.getElementById('modal-message').textContent = message;
-
-  const inputContainer = document.getElementById('modal-input-container');
-  const inputElement = document.getElementById('modal-input');
-  const inputHint = document.getElementById('modal-input-hint');
-
-  if (requiredInput != null) {
-    inputContainer.classList.remove('hidden');
-    inputElement.value = '';
-    inputElement.placeholder = `请输入 "${requiredInput}" 确认`;
-    inputHint.textContent = `请输入 "${requiredInput}" 才能点击确认`;
-    inputHint.classList.remove('hidden');
-    setTimeout(() => inputElement.focus(), 100);
-  } else if (inputValue !== null) {
-    inputContainer.classList.remove('hidden');
-    inputElement.value = inputValue;
-    inputElement.placeholder = '';
-    inputHint.classList.add('hidden');
-    setTimeout(() => inputElement.focus(), 100);
-  } else {
-    inputContainer.classList.add('hidden');
-    inputHint.classList.add('hidden');
-  }
-
-  const confirmBtn = document.getElementById('modal-confirm');
-  confirmBtn.textContent = confirmText;
-  confirmBtn.className = isDanger ? 'btn btn-danger' : 'btn btn-primary';
-  confirmBtn.onclick = () => {
-    const value = (requiredInput !== null || inputValue !== null) ? inputElement.value : null;
-    hideModal();
-    if (modalCallback) modalCallback(value);
-  };
-
-  document.getElementById('modal').classList.remove('hidden');
-}
-
-function hideModal() {
-  document.getElementById('modal').classList.add('hidden');
-  modalCallback = null;
-}
-
-function showToast(message, isError = false) {
-  const toast = document.getElementById('toast');
-  toast.textContent = message;
-  toast.className = isError ? 'toast error' : 'toast';
-  toast.classList.remove('hidden');
-
-  setTimeout(() => {
-    toast.classList.add('hidden');
-  }, 3000);
 }
 
 function escapeHtml(str) {

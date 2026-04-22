@@ -209,6 +209,37 @@ select:focus {
   border-color: var(--accent);
 }
 
+/* Path bar */
+.path-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  margin-bottom: 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.path-bar #path-bar-label {
+  flex-shrink: 0;
+}
+
+.path-bar #path-bar-text {
+  flex: 1;
+  font-family: 'Consolas', 'Courier New', monospace;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+#copy-path-btn, #copy-path-btn2 {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+}
+
 /* Stats bar */
 .stats-bar {
   display: flex;

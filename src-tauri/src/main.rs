@@ -6,7 +6,7 @@ mod world;
 
 use logger::get_log_path_command;
 use world::{
-    backup_world, delete_world, get_worlds_path, list_worlds, open_folder, rename_world,
+    get_worlds_path, list_worlds, open_folder,
 };
 use logger::read_log;
 
@@ -21,9 +21,6 @@ fn main() {
             get_worlds_path,
             list_worlds,
             open_folder,
-            backup_world,
-            delete_world,
-            rename_world,
             get_log_path_command,
             read_log,
         ])

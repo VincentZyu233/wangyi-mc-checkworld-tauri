@@ -18,21 +18,14 @@
 | ![serde](https://img.shields.io/badge/serde-0.2.7-E34F4F?logo=json&logoColor=white) | 0.2.7 | Rust 序列化/反序列化库，处理配置和数据交换 |
 | ![serde_json](https://img.shields.io/badge/serde__json-1.0-E34F4F?logo=json&logoColor=white) | 1.0 | JSON 支持，配合 serde 处理前后端数据 |
 | ![chrono](https://img.shields.io/badge/chrono-0.2.7-7B2D8B?logo=rust&logoColor=white) | 0.2.7 | 日期时间处理，带 serde 支持，记录存档时间戳 |
-| ![walkdir](https://img.shields.io/badge/walkdir-2.4-orange?logo=rust&logoColor=white) | 2.4 | 高效遍历目录树，扫描存档文件夹 |
-| ![fs_extra](https://img.shields.io/badge/fs__extra-1.3-orange?logo=rust&logoColor=white) | 1.3 | 增强版文件操作，复制/移动/重命名文件夹 |
-| ![zip](https://img.shields.io/badge/zip-0.6-orange?logo=rust&logoColor=white) | 0.6 | ZIP 压缩/解压，打包存档为 .zip 备份 |
+| ![walkdir](https://img.shields.io/badge/walkdir-2.4-orange?logo=rust&logoColor=white) | 2.4 | 遍历存档目录树 |
 | ![tracing](https://img.shields.io/badge/tracing-0.1-orange?logo=rust&logoColor=white) | 0.1 | 结构化日志门面 API |
-| ![tracing-subscriber](https://img.shields.io/badge/tracing--subscriber-0.3-orange?logo=rust&logoColor=white) | 0.3 | 日志订阅者（env-filter 过滤器） |
-| ![tracing-appender](https://img.shields.io/badge/tracing--appender-0.2-orange?logo=rust&logoColor=white) | 0.2 | 非阻塞日志写入文件 |
 
 ## ✨ 功能
 
 - 📂 **列出存档** - 显示所有存档的名称、文件夹、保存时间和大小
 - 🔍 **搜索过滤** - 按名称或文件夹名搜索
 - 📊 **多种排序** - 按时间、名称、大小排序
-- 💾 **备份存档** - 一键打包为 ZIP 文件
-- ✏️ **重命名存档** - 修改存档显示名称
-- 🗑️ **删除存档** - 安全删除不需要的存档
 - 🎨 **深色主题** - 现代化暗色 UI 界面
 - 📋 **实时日志** - exe 同级目录 latest.log，前端窗口实时查看
 
@@ -59,17 +52,13 @@
 需要安装 [Rust](https://rustup.rs/) 和 [Tauri CLI](https://tauri.app/)：
 
 ```bash
-# 克隆仓库 (GitHub)
+# 克隆仓库 from GitHub
 git clone https://github.com/VincentZyuApps/wangyi-mc-checkworld-tauri.git
-cd wangyi-mc-checkworld-tauri
-
-# 或克隆仓库 (Gitee)
+# 或克隆仓库 from Gitee
 git clone https://gitee.com/vincent-zyu/wangyi-mc-checkworld-tauri.git
 cd wangyi-mc-checkworld-tauri
-
 # 安装 Tauri CLI
 cargo install tauri-cli
-
 # 构建发布版本
 cargo tauri build
 ```
@@ -126,6 +115,6 @@ wangyi-mc-checkworld-tauri/
 ## 🖥️ 系统要求
 
 - Windows 10/11 x64 (仅支持 64 位)
-- 已安装网易我的世界电脑版(基岩互通版) 
-> here ↓
-> ![基岩互通版示意](doc/基岩互通版.png)
+- 已安装网易我的世界电脑版(基岩互通版)  ↓
+
+![doc/基岩互通版.png](doc/基岩互通版.png)

@@ -1,7 +1,6 @@
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::io::{Read, Write};
 use std::path::PathBuf;
 use walkdir::WalkDir;
 
@@ -147,103 +146,21 @@ pub fn open_folder(path: String) -> Result<(), String> {
     tracing::info!("打开文件夹: {}", path);
     #[cfg(target_os = "windows")]
     {
-        std::process::Command::new("explorer")
-            .arg(&path)
+        // Windows explorer 接受两种路径格式：
+        // 1. 带反斜杠: C:\Users\...\folder
+        // 2. 带正斜杠: C:/Users/.../folder  (推荐，避免被当作通配符)
+        // 注意：explorer 对反斜杠路径有时会误判为文件搜索而打开"此电脑"
+        // 所以统一用正斜杠
+        let explorer_path = path.replace('\\', "/");
+
+        // 用 cmd /c start 包装，确保路径被正确解释
+        std::process::Command::new("cmd")
+            .args(["/C", "start", "", &explorer_path])
             .spawn()
             .map_err(|e| {
                 tracing::error!("打开文件夹失败: {}", e);
                 e.to_string()
             })?;
     }
-    Ok(())
-}
-
-#[tauri::command]
-pub fn backup_world(folder: String, backup_name: String) -> Result<String, String> {
-    tracing::info!("备份存档: folder={}, name={}", folder, backup_name);
-    let worlds_dir = get_worlds_dir();
-    let source_path = worlds_dir.join(&folder);
-    let backup_path = worlds_dir.join(format!("{}.zip", backup_name));
-
-    if !source_path.exists() {
-        tracing::error!("备份源目录不存在: {:?}", source_path);
-        return Err("备份源目录不存在".to_string());
-    }
-
-    let file = fs::File::create(&backup_path).map_err(|e| e.to_string())?;
-    let mut zip = zip::ZipWriter::new(file);
-    let options =
-        zip::write::FileOptions::default().compression_method(zip::CompressionMethod::Deflated);
-
-    let mut file_count = 0;
-    for entry in WalkDir::new(&source_path)
-        .into_iter()
-        .filter_map(|e| e.ok())
-    {
-        let entry_path = entry.path();
-        let relative_path = entry_path.strip_prefix(&source_path).unwrap();
-
-        if entry_path.is_file() {
-            zip.start_file(relative_path.to_string_lossy(), options)
-                .map_err(|e| e.to_string())?;
-            let mut f = fs::File::open(entry_path).map_err(|e| e.to_string())?;
-            let mut buffer = Vec::new();
-            f.read_to_end(&mut buffer).map_err(|e| e.to_string())?;
-            zip.write_all(&buffer).map_err(|e| e.to_string())?;
-            file_count += 1;
-        } else if !relative_path.as_os_str().is_empty() {
-            zip.add_directory(relative_path.to_string_lossy(), options)
-                .map_err(|e| e.to_string())?;
-        }
-    }
-
-    zip.finish().map_err(|e| e.to_string())?;
-
-    let size = format_size(get_folder_size(&source_path));
-    tracing::info!(
-        "备份完成: {} (原始大小 {}), 保存到 {:?}",
-        folder,
-        size,
-        backup_path
-    );
-    Ok(backup_path.to_string_lossy().into())
-}
-
-#[tauri::command]
-pub fn delete_world(folder: String) -> Result<(), String> {
-    tracing::warn!("删除存档: {}", folder);
-    let worlds_dir = get_worlds_dir();
-    let target_path = worlds_dir.join(&folder);
-
-    if !target_path.exists() {
-        tracing::error!("删除目标不存在: {:?}", target_path);
-        return Err("删除目标不存在".to_string());
-    }
-
-    fs::remove_dir_all(&target_path).map_err(|e| {
-        tracing::error!("删除存档失败: {}", e);
-        e.to_string()
-    })?;
-    tracing::info!("删除成功: {}", folder);
-    Ok(())
-}
-
-#[tauri::command]
-pub fn rename_world(folder: String, new_name: String) -> Result<(), String> {
-    tracing::info!("重命名存档: folder={}, new_name={}", folder, new_name);
-    let worlds_dir = get_worlds_dir();
-    let target_path = worlds_dir.join(&folder);
-    let levelname_path = target_path.join("levelname.txt");
-
-    if !levelname_path.exists() {
-        tracing::error!("levelname.txt 不存在: {:?}", levelname_path);
-        return Err("levelname.txt not found".to_string());
-    }
-
-    fs::write(&levelname_path, &new_name).map_err(|e| {
-        tracing::error!("写入新名称失败: {}", e);
-        e.to_string()
-    })?;
-    tracing::info!("重命名成功: {} -> {}", folder, new_name);
     Ok(())
 }

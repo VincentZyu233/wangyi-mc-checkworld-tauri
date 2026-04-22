@@ -55,17 +55,18 @@ def update_cargo_toml(version):
     with open(cargo_path, "r", encoding="utf-8") as f:
         content = f.read()
 
-    pattern = r'^version = "[^"]+"$'
-    replacement = f'version = "{version}"'
-    new_content = re.sub(pattern, replacement, content, count=1, flags=re.MULTILINE)
-
-    if new_content == content:
+    pattern = r'^version = "([^"]+)"$'
+    match = re.search(pattern, content, flags=re.MULTILINE)
+    if not match:
         raise RuntimeError(f"未能在 {cargo_path} 中找到版本号")
+    old_version = match.group(1)
+
+    new_content = re.sub(pattern, f'version = "{version}"', content, count=1, flags=re.MULTILINE)
 
     with open(cargo_path, "w", encoding="utf-8") as f:
         f.write(new_content)
 
-    print_success(f"🎉 {cargo_path} -> v{version}")
+    print_success(f"🎉 {cargo_path}: {old_version} -> v{version}")
 
 
 def update_tauri_conf(version):
